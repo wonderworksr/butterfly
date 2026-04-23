@@ -9,10 +9,10 @@
 
         :root {
             --primary: #1565c0;
-            --accent: #FFD700; /* Gold */
+            --accent: #FFD700; 
             --light-bg: rgba(255, 255, 255, 0.75);
-            --text-dark: #f0f0f0; /* Off-white for main headers, labels */
-            --text-muted: #cccccc; /* Light grey for small text, footer */
+            --text-dark: #f0f0f0; 
+            --text-muted: #cccccc; 
             --shadow: 0 10px 40px rgba(0,0,0,0.15);
         }
 
@@ -28,7 +28,6 @@
             overflow-x: hidden;
         }
 
-        /* The background image */
         body::before {
             content: "";
             position: fixed;
@@ -40,18 +39,17 @@
             z-index: -2;
         }
 
-        /* Overlay to darken background image and increase readability */
         body::after {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.55); /* Semi-transparent black overlay */
+            background-color: rgba(0, 0, 0, 0.55); 
             z-index: -1;
         }
 
         .container {
             backdrop-filter: blur(15px);
-            background: rgba(255, 255, 255, 0.25); /* High translucency */
+            background: rgba(255, 255, 255, 0.25); 
             max-width: 650px;
             width: 90%;
             padding: 50px 40px;
@@ -183,9 +181,7 @@
             display: flex;
             align-items: flex-start;
             margin-bottom: 18px;
-            /* --- MODIFIED: High transparency so white text is visible --- */
             background-color: rgba(255, 255, 255, 0.1);
-            /* ----------------------------------------------------------- */
             padding: 18px;
             border-radius: 8px;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -210,9 +206,7 @@
             font-weight: 400;
             margin-bottom: 0;
             font-size: 13px;
-            /* --- MODIFIED: Bright white text for visibility --- */
             color: #ffffff; 
-            /* ------------------------------------------------ */
             text-transform: none;
             line-height: 1.5;
             letter-spacing: 0;
@@ -265,6 +259,49 @@
             line-height: 1.8;
             font-weight: 300;
         }
+
+        /* --- NEW STYLES FOR THE SUCCESS MESSAGE --- */
+        #success-message {
+            display: none; /* Hidden by default */
+            text-align: center;
+            padding: 40px 20px;
+            color: #ffffff;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        #success-message h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        #success-message p {
+            font-size: 16px;
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .contact-card strong {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -276,7 +313,7 @@
             <p class="pre-launch-text">Our operations for the viral ring delivery service will officially commence bookings for dates **after April 26th**. Submit your details now to secure your position in our priority launch queue.</p>
         </div>
 
-        <form action="https://hook.eu2.make.com/3wln7xegj2xtiwfd3ybln6ne2ekdn3f3" method="POST">
+        <form id="butterfly-form" action="YOUR_MAKE_WEBHOOK_URL_HERE" method="POST">
             
             <div class="form-row">
                 <div class="form-group">
@@ -325,14 +362,25 @@
                 </div>
             </div>
 
-            
             <div class="checkbox-group">
                 <input type="checkbox" id="ac-check" name="ac-check" required>
                 <label for="ac-check">The venue's AC and fans must be temporarily powered down during the 60-second flight.</label>
             </div>
 
-            <button type="submit" class="submit-btn">Enter Priority Queue</button>
+            <button type="submit" class="submit-btn" id="submit-button">Enter Priority Queue</button>
         </form>
+
+        <div id="success-message">
+            <h2>Thank You! 🦋</h2>
+            <p>We will contact you shortly. You are now officially on our priority queue for upcoming dates.</p>
+            
+            <div class="contact-card">
+                <span style="font-size: 13px; color: #ccc; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block;">For Urgent Queries</span>
+                <strong>Shubham Narsaria</strong>
+                Aerial Operations<br>
+                📞 +91 96814 27804
+            </div>
+        </div>
 
         <div class="footer">
             Managed by Shubham Narsaria | Aerial Operations<br>
@@ -340,6 +388,43 @@
             📞 9681427804
         </div>
     </div>
+
+    <script>
+        document.getElementById('butterfly-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // This stops the page from redirecting to Make.com
+
+            const form = e.target;
+            const data = new FormData(form);
+            const submitBtn = document.getElementById('submit-button');
+
+            // Change button text to show it's working
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = 'Submitting...';
+            submitBtn.style.opacity = '0.7';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: form.method,
+                body: data,
+            })
+            .then(response => {
+                // If successful, hide the form and show the success message
+                form.style.display = 'none';
+                document.getElementById('success-message').style.display = 'block';
+                
+                // Also scroll back to the top of the container so they see the message
+                document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
+            })
+            .catch(error => {
+                // If there's an error, revert the button and alert the user
+                console.error('Error:', error);
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.style.opacity = '1';
+                submitBtn.disabled = false;
+                alert('Oops! There was an issue submitting your request. Please try again or contact us directly on WhatsApp.');
+            });
+        });
+    </script>
 
 </body>
 </html>
