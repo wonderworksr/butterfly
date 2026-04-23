@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bionic Butterfly Priority Queue | Wonder Works Rental</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary: #1565c0;
+            --accent: #FFD700; /* Gold */
+            --light-bg: rgba(255, 255, 255, 0.75);
+            --text-dark: #f0f0f0; /* Off-white for main headers, labels */
+            --text-muted: #cccccc; /* Light grey for small text, footer */
+            --shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* The background image */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://res.cloudinary.com/do2yd8cwj/image/upload/f_auto,q_auto/Gemini_Generated_Image_vorvgwvorvgwvorv_vz6pai');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -2;
+        }
+
+        /* Overlay to darken background image and increase readability */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.55); /* Semi-transparent black overlay */
+            z-index: -1;
+        }
+
+        .container {
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.25); /* High translucency */
+            max-width: 650px;
+            width: 90%;
+            padding: 50px 40px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            position: relative;
+            overflow: hidden;
+            margin: 40px 0;
+        }
+
+        .container::after {
+            content: "🦋";
+            position: absolute;
+            font-size: 150px;
+            color: rgba(0, 0, 0, 0.03);
+            bottom: -50px;
+            right: -30px;
+            z-index: -1;
+            transform: rotate(-15deg);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 34px;
+            color: #f0f0f0; 
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .header h1 span {
+            display: block;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--primary); 
+            letter-spacing: 3px;
+            margin-bottom: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .pre-launch-text {
+            color: var(--text-muted); 
+            font-size: 15px;
+            line-height: 1.6;
+            margin-top: 15px;
+            font-weight: 400;
+        }
+
+        .header::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent); 
+            margin: 25px auto 0 auto;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+            .container { padding: 30px 20px; }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #e0e0e0; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="time"],
+        select {
+            width: 100%;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.8); 
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 300;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02) inset;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent); 
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 18px;
+            /* --- MODIFIED: High transparency so white text is visible --- */
+            background-color: rgba(255, 255, 255, 0.1);
+            /* ----------------------------------------------------------- */
+            padding: 18px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox-group:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .checkbox-group input {
+            margin-top: 4px;
+            margin-right: 14px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary); 
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-weight: 400;
+            margin-bottom: 0;
+            font-size: 13px;
+            /* --- MODIFIED: Bright white text for visibility --- */
+            color: #ffffff; 
+            /* ------------------------------------------------ */
+            text-transform: none;
+            line-height: 1.5;
+            letter-spacing: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: none;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .submit-btn::after {
+            content: "🦋";
+            margin-left: 10px;
+            font-size: 18px;
+            transition: all 0.4s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:hover::after {
+            transform: translateX(5px) scale(1.2);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 12px;
+            color: #bbbbbb; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+            padding-top: 30px;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <span class="badge">Wonder Works Rental - Aerial Operations</span>
+            <h1><span>Introducing The Bionic Butterfly</span>The Viral Ring Delivery</h1>
+            <p class="pre-launch-text">Our operations for the viral ring delivery service will officially commence bookings for dates **after April 26th**. Submit your details now to secure your position in our priority launch queue.</p>
+        </div>
+
+        <form action="#" method="POST">
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Name / Event Agency</label>
+                    <input type="text" id="name" name="name" placeholder="Contact Person" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contact">Contact Number</label>
+                    <input type="tel" id="contact" name="contact" placeholder="e.g. +91 9681427804" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="city">Event City</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="venue">Venue Name & Hall</label>
+                    <input type="text" id="venue" name="venue" placeholder="Hall name if known" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="occasion">Occasion</label>
+                <select id="occasion" name="occasion" required>
+                    <option value="" disabled selected>Select event type</option>
+                    <option value="Engagement">Engagement</option>
+                    <option value="Wedding">Wedding</option>
+                    <option value="Corporate">Corporate</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="date">Event Date</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="time">Delivery Time (Approx)</label>
+                    <input type="time" id="time" name="time" required>
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="indoor-check" name="indoor-check" required>
+                <label for="indoor-check">This service is exclusively available for <strong>indoor venues only</strong>.</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="ac-check" name="ac-check" required>
+                <label for="ac-check">The venue's AC and fans must be temporarily powered down during the 60-second flight.</label>
+            </div>
+
+            <button type="submit" class="submit-btn">Enter Priority Queue</button>
+        </form>
+
+        <div class="footer">
+            Managed by Shubham Narsaria | Aerial Operations<br>
+            <strong>Wonder Works Rental</strong><br>
+            📞 9681427804
+        </div>
+    </div>
+
+</body>
+</html>
