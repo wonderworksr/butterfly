@@ -389,15 +389,15 @@
         </div>
     </div>
 
-    <script>
+<script>
         document.getElementById('butterfly-form').addEventListener('submit', function(e) {
-            e.preventDefault(); // This stops the page from redirecting to Make.com
+            e.preventDefault(); 
 
             const form = e.target;
-            const data = new FormData(form);
+            // This line converts the data into the exact format Make.com expects
+            const data = new URLSearchParams(new FormData(form));
             const submitBtn = document.getElementById('submit-button');
 
-            // Change button text to show it's working
             const originalBtnText = submitBtn.innerHTML;
             submitBtn.innerHTML = 'Submitting...';
             submitBtn.style.opacity = '0.7';
@@ -406,17 +406,18 @@
             fetch(form.action, {
                 method: form.method,
                 body: data,
+                // We must explicitly tell Make.com what type of data is arriving
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
             })
             .then(response => {
-                // If successful, hide the form and show the success message
+                if (!response.ok) throw new Error('Network response was not ok');
                 form.style.display = 'none';
                 document.getElementById('success-message').style.display = 'block';
-                
-                // Also scroll back to the top of the container so they see the message
                 document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
             })
             .catch(error => {
-                // If there's an error, revert the button and alert the user
                 console.error('Error:', error);
                 submitBtn.innerHTML = originalBtnText;
                 submitBtn.style.opacity = '1';
