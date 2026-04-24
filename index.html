@@ -394,25 +394,34 @@
             e.preventDefault(); 
 
             const form = e.target;
-            // This line converts the data into the exact format Make.com expects
-            const data = new URLSearchParams(new FormData(form));
             const submitBtn = document.getElementById('submit-button');
 
+            // 1. Change button state
             const originalBtnText = submitBtn.innerHTML;
             submitBtn.innerHTML = 'Submitting...';
             submitBtn.style.opacity = '0.7';
             submitBtn.disabled = true;
 
+            // 2. Convert form data cleanly to pure JSON
+            const formData = new FormData(form);
+            const dataObject = Object.fromEntries(formData.entries());
+            
+            // Explicitly capture the checkbox state
+            dataObject['ac-check'] = document.getElementById('ac-check').checked;
+
+            // 3. Send as pure JSON
             fetch(form.action, {
-                method: form.method,
-                body: data,
-                // We must explicitly tell Make.com what type of data is arriving
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(dataObject)
             })
             .then(response => {
                 if (!response.ok) throw new Error('Network response was not ok');
+                
+                // Success! Show the message
                 form.style.display = 'none';
                 document.getElementById('success-message').style.display = 'block';
                 document.querySelector('.container').scrollIntoView({ behavior: 'smooth' });
